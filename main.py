@@ -18,29 +18,19 @@ class MatchOutcome:
 		self.window = tk.Tk()
 
 		self.window.rowconfigure(list(range(0,10)), minsize = 50, weight = 1)
-		self.window.columnconfigure(list(range(0,3)), minsize = 50, weight = 1)
-
-		self.IFTextFields = []
-
-		# Creates left side of panel for teams in favor
-		tk.Label(master=self.window, text="In Favor:").grid(row=0, column=0)
-		for x in range(1,9):
-			text = tk.Entry(master=self.window, width=20)
-			text.grid(row=x, column=0, sticky='nw')
-			text.bind("<Return>", self.outputSheet)
-			self.IFTextFields.append(text)
+		self.window.columnconfigure(list(range(0,2)), minsize = 50, weight = 1)
 
 		self.OFTextFields = []
 		self.checkButtons = []
 
 		# Creates right side of panel for teams out of favor
-		tk.Label(master=self.window, text="Out of Favor:").grid(row=0, column=2)
+		tk.Label(master=self.window, text="Out of Favor:").grid(row=0, column=0)
 		for x in range(1,9):
 			text = tk.Entry(master=self.window, width=20)
-			text.grid(row=x, column=2, sticky='ne')
+			text.grid(row=x, column=0, sticky='ne')
 			text.bind("<Return>", self.outputSheet)
 			button = ttk.Checkbutton(master=self.window)
-			button.grid(row=x, column=3, sticky='e')
+			button.grid(row=x, column=2, sticky='e')
 			self.OFTextFields.append(text)
 			self.checkButtons.append(button)
 
@@ -52,12 +42,162 @@ class MatchOutcome:
 
 	def outputSheet(self, event = None):
 		vsTeams = []
+		# for x in range(0, 8):
+		# 	if self.checkButtons[x].instate(['selected']):
+		# 		vsTeams.append([self.OFTextFields[x].get()]) # creates a list that looks like [(team1, team2), (team3, team4)] for future processing
+		# another for loop to loop through different intervals of the list
+
+		# adds all checked boxes to list
 		for x in range(0, 8):
 			if self.checkButtons[x].instate(['selected']):
-				vsTeams.append([self.IFTextFields[x].get(), self.OFTextFields[x].get()]) # creates a list that looks like [(team1, team2), (team3, team4)] for future processing
-		combinations = product(*vsTeams)
+				vsTeams.append(self.OFTextFields[x].get())
 
-		df = pd.DataFrame(list(combinations))
+
+		# this is for 2 teams winning, add for x in range(0, current team winning count) before for team in vsteams so it will append other teams too
+		print(vsTeams)
+		finalteams = []
+		df = pd.DataFrame(vsTeams)
+
+		# works for any combo of 2 teams winning \/\/\/
+
+		if len(vsTeams) >= 2:
+			for x in range(0, len(vsTeams)):
+				tempTeams = []
+				for team in vsTeams:
+					tempPair = sorted([vsTeams[x], team])
+					if vsTeams[x] != team and tempPair not in finalteams and tempPair not in tempTeams:
+						tempTeams.append(tempPair)
+				finalteams += tempTeams
+
+			print('\ntwo winners:')
+			df['Two Winners'] = pd.Series(finalteams)
+			for team in finalteams:
+				print(team)
+
+
+		if len(vsTeams) >= 3:
+			finalteams = []
+			# working for combo of 3
+			for x in range(0, len(vsTeams)):
+				tempTeams = []
+				for team3 in vsTeams:
+					for team in vsTeams:
+						tempPair = sorted([vsTeams[x], team, team3])
+						if len(set(tempPair)) == len(tempPair) and tempPair not in finalteams and tempPair not in tempTeams:
+							tempTeams.append(tempPair)
+				finalteams += tempTeams
+
+			print('\nthree winners:')
+			df['Three Winners'] = pd.Series(finalteams)
+			for team in finalteams:
+				print(team)
+
+
+		if len(vsTeams) >= 4:
+			finalteams = []
+			# working for combo of 4
+			for x in range(0, len(vsTeams)):
+				tempTeams = []
+				for team3 in vsTeams:
+					for team4 in vsTeams:
+						for team in vsTeams:
+							tempPair = sorted([vsTeams[x], team, team3, team4])
+							if len(set(tempPair)) == len(tempPair) and tempPair not in finalteams and tempPair not in tempTeams:
+								tempTeams.append(tempPair)
+				finalteams += tempTeams
+
+			print('\nfour winners:')
+			df['Four Winners'] = pd.Series(finalteams)
+			for team in finalteams:
+				print(team)
+
+		if len(vsTeams) >= 5:
+			finalteams = []
+			# working for combo of 4
+			for x in range(0, len(vsTeams)):
+				tempTeams = []
+				for team3 in vsTeams:
+					for team4 in vsTeams:
+						for team5 in vsTeams:
+							for team in vsTeams:
+								tempPair = sorted([vsTeams[x], team, team3, team4, team5])
+								if len(set(tempPair)) == len(tempPair) and tempPair not in finalteams and tempPair not in tempTeams:
+									tempTeams.append(tempPair)
+				finalteams += tempTeams
+
+			print('\nfive winners:')
+			df['Five Winners'] = finalteams
+			for team in finalteams:
+				print(team)
+
+		if len(vsTeams) >= 6:
+			finalteams = []
+			# working for combo of 4
+			for x in range(0, len(vsTeams)):
+				tempTeams = []
+				for team3 in vsTeams:
+					for team4 in vsTeams:
+						for team5 in vsTeams:
+							for team6 in vsTeams:
+								for team in vsTeams:
+									tempPair = sorted([vsTeams[x], team, team3, team4, team5, team6])
+									if len(set(tempPair)) == len(tempPair) and tempPair not in finalteams and tempPair not in tempTeams:
+										tempTeams.append(tempPair)
+				finalteams += tempTeams
+
+			print('\nsix winners:')
+			df['Six Winners'] = finalteams
+			for team in finalteams:
+				print(team)
+
+		if len(vsTeams) >= 7:
+			finalteams = []
+			# working for combo of 4
+			for x in range(0, len(vsTeams)):
+				tempTeams = []
+				for team3 in vsTeams:
+					for team4 in vsTeams:
+						for team5 in vsTeams:
+							for team6 in vsTeams:
+								for team7 in vsTeams:
+									for team in vsTeams:
+										tempPair = sorted([vsTeams[x], team, team3, team4, team5, team6, team7])
+										if len(set(tempPair)) == len(tempPair) and tempPair not in finalteams and tempPair not in tempTeams:
+											tempTeams.append(tempPair)
+				finalteams += tempTeams
+
+			print('\nseven winners:')
+			df['Seven Winners'] = finalteams
+			for team in finalteams:
+				print(team)
+
+		if len(vsTeams) >= 8:
+			finalteams = []
+			# working for combo of 4
+			for x in range(0, len(vsTeams)):
+				tempTeams = []
+				for team3 in vsTeams:
+					for team4 in vsTeams:
+						for team5 in vsTeams:
+							for team6 in vsTeams:
+								for team7 in vsTeams:
+									for team8 in vsTeams:
+										for team in vsTeams:
+											tempPair = sorted([vsTeams[x], team, team3, team4, team5, team6, team7, team8])
+											if len(set(tempPair)) == len(tempPair) and tempPair not in finalteams and tempPair not in tempTeams:
+												tempTeams.append(tempPair)
+				finalteams += tempTeams
+
+			print('\neight winners:')
+			df['Eight Winners'] = finalteams
+			for team in finalteams:
+				print(team)
+
+
+
+		# combinations = product(*vsTeams)
+
+		# df = pd.DataFrame(list(combinations))
 		df.to_csv('combinations' + str(len(os.listdir('.'))) + '.csv')
 
 
