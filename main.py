@@ -42,11 +42,6 @@ class MatchOutcome:
 
 	def outputSheet(self, event = None):
 		vsTeams = []
-		# for x in range(0, 8):
-		# 	if self.checkButtons[x].instate(['selected']):
-		# 		vsTeams.append([self.OFTextFields[x].get()]) # creates a list that looks like [(team1, team2), (team3, team4)] for future processing
-		# another for loop to loop through different intervals of the list
-
 		# adds all checked boxes to list
 		for x in range(0, 8):
 			if self.checkButtons[x].instate(['selected']):
@@ -54,9 +49,12 @@ class MatchOutcome:
 
 
 		# this is for 2 teams winning, add for x in range(0, current team winning count) before for team in vsteams so it will append other teams too
-		print(vsTeams)
 		finalteams = []
-		df = pd.DataFrame(vsTeams)
+		columnFiller = []
+		columnFiller += vsTeams
+		for x in range(0, 75):
+			columnFiller += ['']
+		df = pd.DataFrame(pd.Series(columnFiller))
 
 		# works for any combo of 2 teams winning \/\/\/
 
@@ -65,14 +63,13 @@ class MatchOutcome:
 				tempTeams = []
 				for team in vsTeams:
 					tempPair = sorted([vsTeams[x], team])
-					if vsTeams[x] != team and tempPair not in finalteams and tempPair not in tempTeams:
+					if len(set(tempPair)) == len(tempPair) and tempPair not in finalteams and tempPair not in tempTeams:
 						tempTeams.append(tempPair)
 				finalteams += tempTeams
 
-			print('\ntwo winners:')
 			df['Two Winners'] = pd.Series(finalteams)
-			for team in finalteams:
-				print(team)
+			df['Two Winners']
+			
 
 
 		if len(vsTeams) >= 3:
@@ -87,10 +84,8 @@ class MatchOutcome:
 							tempTeams.append(tempPair)
 				finalteams += tempTeams
 
-			print('\nthree winners:')
 			df['Three Winners'] = pd.Series(finalteams)
-			for team in finalteams:
-				print(team)
+			
 
 
 		if len(vsTeams) >= 4:
@@ -106,10 +101,8 @@ class MatchOutcome:
 								tempTeams.append(tempPair)
 				finalteams += tempTeams
 
-			print('\nfour winners:')
 			df['Four Winners'] = pd.Series(finalteams)
-			for team in finalteams:
-				print(team)
+			
 
 		if len(vsTeams) >= 5:
 			finalteams = []
@@ -125,10 +118,8 @@ class MatchOutcome:
 									tempTeams.append(tempPair)
 				finalteams += tempTeams
 
-			print('\nfive winners:')
-			df['Five Winners'] = finalteams
-			for team in finalteams:
-				print(team)
+			df['Five Winners'] = pd.Series(finalteams)
+			
 
 		if len(vsTeams) >= 6:
 			finalteams = []
@@ -145,10 +136,8 @@ class MatchOutcome:
 										tempTeams.append(tempPair)
 				finalteams += tempTeams
 
-			print('\nsix winners:')
-			df['Six Winners'] = finalteams
-			for team in finalteams:
-				print(team)
+			df['Six Winners'] = pd.Series(finalteams)
+			
 
 		if len(vsTeams) >= 7:
 			finalteams = []
@@ -166,10 +155,8 @@ class MatchOutcome:
 											tempTeams.append(tempPair)
 				finalteams += tempTeams
 
-			print('\nseven winners:')
-			df['Seven Winners'] = finalteams
-			for team in finalteams:
-				print(team)
+			df['Seven Winners'] = pd.Series(finalteams)
+			
 
 		if len(vsTeams) >= 8:
 			finalteams = []
@@ -188,16 +175,15 @@ class MatchOutcome:
 												tempTeams.append(tempPair)
 				finalteams += tempTeams
 
-			print('\neight winners:')
-			df['Eight Winners'] = finalteams
-			for team in finalteams:
-				print(team)
+			df['Eight Winners'] = pd.Series(finalteams)
+			
 
 
 
 		# combinations = product(*vsTeams)
 
 		# df = pd.DataFrame(list(combinations))
+		print('Outputting combinations to file: combinations' + str(len(os.listdir('.'))) + '.csv\n')
 		df.to_csv('combinations' + str(len(os.listdir('.'))) + '.csv')
 
 
